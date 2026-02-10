@@ -1,0 +1,23 @@
+---
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog"))
+  .filter((p) => !p.data.draft);
+---
+
+<html lang="es">
+  <body>
+    <h1>Blog</h1>
+    <ul>
+      {posts.map((post) => {
+        const slug = post.id.replace(/\.(md|mdx)$/, "");
+        return (
+          <li>
+            <a href={`/blog/${slug}`}>{post.data.title}</a>
+          </li>
+        );
+      })}
+    </ul>
+  </body>
+</html>
+

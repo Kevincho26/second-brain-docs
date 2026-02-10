@@ -1,0 +1,34 @@
+---
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts
+    .filter((p) => !p.data.draft)
+    .map((post) => ({
+      // En Astro v5 + loader glob, usa `id` como base del slug
+      params: { slug: post.id.replace(/\.(md|mdx)$/, "") },
+      props: { post },
+    }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>{post.data.title}</title>
+  </head>
+
+  <body style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+    <h1>{post.data.title}</h1>
+
+    {post.data.pubDate ? (
+      <p><small>{post.data.pubDate.toISOString().slice(0, 10)}</small></p>
+    ) : null}
+
+    <Content />
+  </body>
+</html>
